@@ -1,0 +1,4 @@
+Depends on:
+
+- RabbitMQ
+- MongoDB
