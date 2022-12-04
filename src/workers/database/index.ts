@@ -38,7 +38,7 @@ export class DatabaseWorker {
     }
 
     const coll4h = this.db.collection("4h");
-    const signals4h = await coll1d.find().toArray();
+    const signals4h = await coll4h.find().toArray();
     for (const signal of signals4h) {
       signals[signal._id] = {
         ...signals[signal._id],

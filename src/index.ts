@@ -8,15 +8,10 @@ import routes from "./routes.js";
 // import { graphqlHTTP } from "express-graphql";
 
 import amqp from "amqplib";
+import { RedisWorker } from "./workers/redisWorker.js";
 
-import { createClient } from "redis";
-
-const redis_client = createClient({
-  url: "redis://redis"
-});
-
+const redisWorker = new RedisWorker();
 let rabbit_connected = false;
-let redis_connected = false;
 let conn;
 export let channel;
 async function delay(ms) {
@@ -43,26 +38,11 @@ const connectRabbit = async () => {
   }
 };
 
-const connectRedis = async () => {
-  console.log("Starting Redis connection...");
-  while (!redis_connected) {
-    console.log("Trying to connect...");
-    try {
-      await redis_client.connect();
-      redis_connected = true;
-      console.log("Redis Connected!!");
-    } catch {
-      console.log("Error on connecting Redis. Retrying...");
-      await delay(5000);
-    }
-  }
-};
-
 const app = express();
 
 (async () => {
   await connectRabbit();
-  await connectRedis();
+  await redisWorker.connect();
 })();
 
 app.use("/api", routes);
