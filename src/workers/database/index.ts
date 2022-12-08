@@ -30,7 +30,13 @@ export class DatabaseWorker {
   async getSignals() {
     const signals = {};
     const coll1d = this.db.collection("1d");
-    const signals1d = await coll1d.find().toArray();
+    const signals1d = await coll1d
+      .find({
+        "signals.lastUpdate": {
+          $gte: new Date()
+        }
+      })
+      .toArray();
     for (const signal of signals1d) {
       signals[signal._id] = {
         "1d": signal.signals
@@ -38,7 +44,13 @@ export class DatabaseWorker {
     }
 
     const coll4h = this.db.collection("4h");
-    const signals4h = await coll4h.find().toArray();
+    const signals4h = await coll4h
+      .find({
+        "signals.lastUpdate": {
+          $gte: new Date()
+        }
+      })
+      .toArray();
     for (const signal of signals4h) {
       signals[signal._id] = {
         ...signals[signal._id],

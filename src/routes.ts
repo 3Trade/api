@@ -8,7 +8,6 @@ import { RedisWorker } from "./workers/redisWorker.js";
 // import { RedisWorker } from "./workers/redisWorker.js";
 
 const router = express.Router();
-
 const ticker = async (req, res) => {
   console.log("Ticker callback");
   let ticker = await binance.get24hrChangeStatististics();
@@ -163,6 +162,13 @@ const getAdminData = async (req, res) => {
   });
 };
 
+const backtest = async (req, res) => {
+  const transportWorker = new TransportWorker();
+  await transportWorker.connect();
+  transportWorker.sendToQueue("backtest", { test: "OK" });
+  res.json("OK3");
+};
+
 router.get("/status", status);
 router.get("/signals", signals);
 router.get("/admin", getAdminData);
@@ -170,6 +176,7 @@ router.get("/admin", getAdminData);
 // router.get("/:symbol/:timeframe", candlesticks);
 // router.get("/:symbol/:timeframe/macd", macd);
 router.get("/ticker", ticker);
+router.get("/backtest", backtest);
 // router.get("/symbols", symbols);
 // router.get("/:symbol/:timeframe/macd_cross", macd_cross);
 // router.get("/symbols/macd_cross/:timeframe", symbols_crosses);
