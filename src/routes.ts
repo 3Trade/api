@@ -163,10 +163,20 @@ const getAdminData = async (req, res) => {
 };
 
 const backtest = async (req, res) => {
+  const databaseWorker = new DatabaseWorker("indicators");
+  await databaseWorker.connect();
+  const resp = await databaseWorker.getOneFromCollection("4h", {
+    _id: "ETHBTC"
+  });
+
   const transportWorker = new TransportWorker();
   await transportWorker.connect();
-  transportWorker.sendToQueue("backtest", { test: "OK" });
-  res.json("OK3");
+  transportWorker.sendToQueue("signals", {
+    pair: "ETHBTC",
+    timeframe: "4h",
+    ...resp.indicators
+  });
+  res.json("OK");
 };
 
 router.get("/status", status);

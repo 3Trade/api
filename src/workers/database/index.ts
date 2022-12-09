@@ -21,6 +21,10 @@ export class DatabaseWorker {
     return this.db;
   }
 
+  async getOneFromCollection(collection, filter) {
+    return this.db.collection(collection).findOne(filter);
+  }
+
   async getAllSymbolsKlines(timeframe) {
     const coll = this.db.collection(timeframe);
     const res = await coll.find();
