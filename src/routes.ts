@@ -171,7 +171,7 @@ const backtest = async (req, res) => {
 
   const transportWorker = new TransportWorker();
   await transportWorker.connect();
-  transportWorker.sendToQueue("signals", {
+  transportWorker.sendToQueue("backtest", {
     pair: "ETHBTC",
     timeframe: "4h",
     ...resp.indicators

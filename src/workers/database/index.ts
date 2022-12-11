@@ -32,6 +32,20 @@ export class DatabaseWorker {
   }
 
   async getSignals() {
+    const isMacdSignal = (signal) => {
+      const totalLength = signal.time_.length;
+
+      if (signal.macdUp[signal.macdUp.length - 1] >= totalLength - 2)
+        return true;
+      else return false;
+    };
+
+    const isSmaSignal = (signal) => {
+      const totalLength = signal.time_.length;
+      if (signal.sma[totalLength - 1] === "positive") return true;
+      else return false;
+    };
+
     const signals = {};
     const coll1d = this.db.collection("1d");
     const signals1d = await coll1d
@@ -41,9 +55,13 @@ export class DatabaseWorker {
         }
       })
       .toArray();
+
     for (const signal of signals1d) {
       signals[signal._id] = {
-        "1d": signal.signals
+        "1d": {
+          macd: isMacdSignal(signal.signals),
+          sma: isSmaSignal(signal.signals)
+        }
       };
     }
 
@@ -58,7 +76,10 @@ export class DatabaseWorker {
     for (const signal of signals4h) {
       signals[signal._id] = {
         ...signals[signal._id],
-        "4h": signal.signals
+        "4h": {
+          macd: isMacdSignal(signal.signals),
+          sma: isSmaSignal(signal.signals)
+        }
       };
     }
 
